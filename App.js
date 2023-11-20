@@ -1,10 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, KeyboardAvoidingView, Platform} from 'react-native';
 import DateHead from './components/DateHead';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
 import AddTodo from './components/AddTodo';
 import Empty from './components/Empty';
 import TodoList from './components/TodoList';
+import todosStorage from './components/todosStorage';
 
 function App () {
   const today = new Date();
@@ -15,6 +17,19 @@ function App () {
     {id: 3, text: '투두리스트 만들어보기', done: false},
     {id: 4, text: '민정이 저녁에 놀러간다', done: true},
   ]);
+
+  useEffect(() => {
+    todosStorage
+      .get()
+      .then(setTodos)
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    todosStorage
+      .set(todos)
+      .catch(console.error);
+  }, [todos]);
 
   const onInsert = text => {
     // 새로 등록할 항목의 id를 구합니다.
